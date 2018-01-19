@@ -2,10 +2,12 @@ require 'forwardable'
 
 class Square
   BLANK = "_"
-  attr_accessor :value
+  attr_accessor :value, :row, :col
 
   def initialize(row, col, diagonals = [])
     @value = BLANK
+    @row = row
+    @col = col
     @lines = [row, col, diagonals].flatten
   end
 
@@ -35,11 +37,11 @@ end
 class Line
   extend Forwardable
 
-  attr_accessor :score
+  attr_accessor :num, :score, :winner
 
   UNWINNABLE = -1
 
-  def_delegators :@squares, :[], :[]=, :<<, :size
+  def_delegators :@squares, :[], :[]=, :<<, :size, :each
 
   def initialize(num, game)
     @game = game
@@ -97,16 +99,17 @@ class Game
           @cols[col_num] = col
         end
 
-        square = Square.new(row, col)
+        diags = []
+        diags << @diagonals.first if row_num == col_num
+        diags << @diagonals.last if row_num + col_num == @max
+        square = Square.new(row, col, diags)
 
         @rows[row_num] << square
         @cols[col_num] << square
-
-        if col_num == row_num
-          @diagonals.first[col_num] = square
-        elsif col_num + row_num == @max
-          @diagonals.last[col_num] = square
+        diags.each do |diag|
+          diag << square
         end
+
       end
     end
   end
@@ -114,19 +117,27 @@ class Game
   def draw
     @rows.each{ |row| row.draw }
     print "\n"
+
+    case
+    when @winner == STALEMATE
+      puts "The game is a draw!"
+    when [PLAYER_X, PLAYER_O].include?(@winner)
+      puts "Player #{@winner} wins!"
+    end
   end
 
   def play(row_num, col_num)
     square = square_at(row_num, col_num)
 
-    if square.taken?
+    case
+    when square.taken?
       puts "That square is occupied!"
-    else
+    when !@winner
       square.take(@current_player)
-      # check_for_game_over
       swap_players
-      draw
     end
+
+    draw
   end
 
   def win(value)
