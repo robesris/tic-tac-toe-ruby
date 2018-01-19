@@ -29,17 +29,7 @@ module TicTacToe
             @cols[col_num] = col
           end
 
-          diags = []
-          diags << @diagonals.first if row_num == col_num
-          diags << @diagonals.last if row_num + col_num == @max
-          square = Square.new(row, col, diags)
-
-          @rows[row_num] << square
-          @cols[col_num] << square
-          diags.each do |diag|
-            diag << square
-          end
-
+          set_up_diagonals(row, col)
         end
       end
     end
@@ -80,6 +70,19 @@ module TicTacToe
     end
 
     private
+
+    def set_up_diagonals(row, col)
+      diags = []
+      diags << @diagonals.first if row.num == col.num
+      diags << @diagonals.last if row.num + col.num == @max
+      square = Square.new(row, col, diags)
+
+      @rows[row.num] << square
+      @cols[col.num] << square
+      diags.each do |diag|
+        diag << square
+      end
+    end
 
     def square_at(row_num, col_num)
       @rows[row_num][col_num]
