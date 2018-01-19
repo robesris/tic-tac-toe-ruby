@@ -42,6 +42,7 @@ Since a Line (and therefore the Game) is won when the number of X's or O's in a 
 1. Make a move
 2. For each row, column, and diagonal the square is present in (maximum of 4, regardless of board size):
   - Check if the line is unwinnable (i.e. marks from both players are present)
+  - If it is unwinnable, increment the count of unwinnable Lines.
   - If not, increment the score for this Line for the current player and check if the score equals the size of the Line
   - If we have the target score, the Line and the Game is won.
-3. If the Line was marked unwinnable, check if all Lines have been marked unwinnable. If so, the game ends in a Stalemate.
+3. If the Line was marked unwinnable, check if the count of Lines marked unwinnable is equal to the total number of lines. If so, the game ends in a Stalemate.
