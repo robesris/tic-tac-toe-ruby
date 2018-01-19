@@ -7,7 +7,7 @@ irb
 require './test.rb'
 ```
 
-You should see all three tests pass.
+You should see all tests pass.
 
 # Play around with it
 
